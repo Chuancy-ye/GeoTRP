@@ -1,4 +1,18 @@
 # shiny-work
+ui <- fixedPage(
+       
+     sliderInput("T",h3("temperture"),min = 200,max = 400,value = c(300)),
+     sliderInput("P",h3("pressure"),min = 900,max = 1100,value = c(1000)),
+          
+     mainPanel(
+        
+         plotOutput('pl', width='70%', height='501px')
+         
+                     
+         )
+       
+    )
+
 server <- function(input, output) {
 
   output$pl <- renderPlot({
@@ -47,3 +61,4 @@ server <- function(input, output) {
   
     
 } 
+shinyApp(ui = ui, server = server)
