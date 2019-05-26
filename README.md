@@ -53,12 +53,7 @@ server <- function(input, output) {
      title(main = syslab(c("H2O", "CO2", "CaO", "MgO", "SiO2")))
      dprop <- describe.property(c("T", "P"), c(input$T, input$P))
      dbasis <- describe.basis(ibasis = 2)
-     legend("bottomright", c(dprop, dbasis), bty = "n", cex = 0.9)
-                
-   
-                      
-  })
-  
-    
-} 
-shinyApp(ui = ui, server = server)
+     legend("bottomright", c(dprop, dbasis), bty = "n", cex = 0.9)                   
+     })    
+     } 
+     shinyApp(ui = ui, server = server)
