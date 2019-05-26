@@ -1,5 +1,5 @@
 # shiny-work
-ui <- fixedPage(
+     ui <- fixedPage(
        
      sliderInput("T",h3("temperture"),min = 200,max = 400,value = c(300)),
      sliderInput("P",h3("pressure"),min = 900,max = 1100,value = c(1000)),
@@ -13,9 +13,9 @@ ui <- fixedPage(
        
     )
 
-server <- function(input, output) {
+    server <- function(input, output) {
 
-  output$pl <- renderPlot({
+     output$pl <- renderPlot({
 
      # CHNOSZ/demo/saturation.R
      # first version (activity_ratios.R) 20170217
