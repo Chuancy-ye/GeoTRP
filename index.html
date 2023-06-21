@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+ <title>GeoTVP</title>
+  <style>
+  <script src="shared/jquery.js" type="text/javascript"></script>
+  <script src="shared/shiny.js" type="text/javascript"></script>
+  <link rel="stylesheet" type="text/css" href="shared/shiny.css"/> 
+
+* {
+  box-sizing: border-box;
+}
+ 
+ h2{color: #54565b}h4{color: #54565b}h3{color: #54565b}
+/*主题*/
+body {
+  font-family: Arial;
+  padding: 0.1rem 5rem;
+  background: #a8a8aa;
+}
+ .banner-caption{
+ 	padding: 0.3rem;
+ }
+ .banner-text {
+ 	text-transform:uppercase;
+ 	color:white;
+ }
+ .banner-text1 {
+  
+  color:white;
+ }
+ 	
+
+/* 头部标题 */
+.header {
+  padding: 0rem;
+  text-align: center;
+  background: white;
+   color:#f1f1f1
+}
+ 
+.header h1 {
+  font-size: 3rem;
+  color:#f1f1f1 
+}
+ 
+/* 导航条 */
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+}
+ 
+/* 导航条链接 */
+.topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 0.9rem 1rem;
+  text-decoration: none;
+}
+ 
+/* 链接颜色修改 */
+.topnav a:hover {
+  background-color: #f1f1f1;
+  color: black;
+}
+ 
+.search-container {
+  margin-top: 0.8rem;
+  float: left;
+
+}
+
+.topnav input[type=text] {
+  padding: 0.6rem;
+  margin-top: 0.8rem;
+  font-size: 1.7rem;
+  border: none;
+}
+
+.search-container button {
+  float: right;
+  padding: 0.8rem 1rem;
+ 
+  margin-right: 1.6rem;
+  background: #ddd;
+  font-size: 1.5rem;
+  border: none;
+  cursor: pointer;
+}
+
+.search-container button:hover {
+  background: #ccc;
+}
+
+@media screen and (max-width: 60rem) {
+  .search-container {
+    float: none;
+  }
+  .topnav a, .topnav input[type=text], .search-container button {
+    float: none;
+    display: block;
+    text-align: left;
+    width: 100%;
+    margin: 0;
+    padding: 1.4rem;
+  }
+  .topnav input[type=text] {
+    border: 0.1rem solid #ccc;  
+  }
+}
+/* 创建两列 */
+/* Left column */
+.leftcolumn {   
+  background-color: #f1f1f1;
+  float: left;
+  width: 75%;
+}
+ 
+/* 右侧栏 */
+.rightcolumn {
+  float: right;
+  width: 25%;
+  
+  background-color: #f1f1f1;
+  
+}
+ 
+/* 图像部分 */
+.fakeimg {
+  background-color: #aaa;
+  width: 98%;
+  padding: 0rem;
+}
+ 
+/* 文章卡片效果 */
+.card {
+  background-color: white;
+
+  padding: 0.6rem;
+  margin-top:  0.6rem;
+  margin-left: 0.6rem;
+}
+.card1 {
+  background-color: white;
+ margin-top:  0.6rem;
+  padding:  0.6rem;
+  
+  
+}
+
+
+/* 列后面清除浮动 */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+ 
+/* 底部 */
+.footer {
+  padding: 1rem;
+  text-align: center;
+  background: #a8a8aa;
+  margin-top: 1rem;
+}
+ 
+/* 响应式布局 - 屏幕尺寸小于 80rem 时，两列布局改为上下布局 */
+@media screen and (max-width: 80rem) {
+  .leftcolumn, .rightcolumn {   
+    width: 100%;
+    padding: 0;
+  }
+}
+ 
+/* 响应式布局 -屏幕尺寸小于 400px 时，导航等布局改为上下布局 */
+@media screen and (max-width: 40rem) {
+  .topnav a {
+    float: none;
+    width: 100%;
+  }
+
+/*}
+h3{
+ 
+  font-family: "STKaiti"
+}
+h4{
+
+  font-family: "STKaiti"
+}*/
+</style>
+
+<style>ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0.1rem;
+    overflow: hidden;
+    border: 0.1rem solid #f1f1f1;
+    background-color: #f1f1f1;
+}
+
+li {
+    float: right;
+    position:relative;
+	
+}
+
+li a {
+    display: block;
+    color: #666;
+    text-align: center;
+    padding: 0.9rem 1.2rem;
+    text-decoration: none;
+
+}
+
+li a:hover:not(.active) {
+    background-color: #ddd;
+}
+
+li a.active {
+    color: white;
+    background-color: #0099cc;
+}
+.text_line
+{
+	clear:both;
+	margin-bottom:0.2rem;
+}
+div a.active{
+
+    color: white;
+    background-color: #4CAF50;
+}
+</style>
+
+<style>
+div.img {
+    border: 0.1rem solid #ccc;
+}
+
+div.img:hover {
+    border: 0.1rem solid #777;
+}
+
+div.img img {
+    width: 100%;
+    height: auto;
+}
+
+div.desc {
+    padding: 1rem;
+    text-align: center;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+.responsive {
+    padding: 0.6rem;
+    float: left;
+    width: 24.99999%;
+}
+
+@media only screen and (max-width: 47rem){
+    .responsive {
+        width: 49.99999%;
+        margin:0.6rem 0;
+    }
+}
+
+@media only screen and (max-width: 30rem){
+    .responsive {
+        width: 100%;
+    }
+}
+
+.clearfix:after {
+    content: "";
+    display: table;
+    clear: both;
+}
+/*提示框*/
+.tooltip {
+    position: relative;
+    display: inline-block;
+    border-bottom: 0.1rem dotted black;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 12rem;
+   
+   
+    border-radius: 0.6rem;
+    padding: 0.5rem 0;
+    position: absolute;
+    z-index: 1;
+
+     top: -2rem;
+    right: 250%; 
+    
+    /* 淡入 - 1秒内从 0% 到 100% 显示: */
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}: visible;
+
+</style>
+<!-- <style>
+div.img {
+    margin: 5px;
+    border: 1px solid #ccc;
+    float:right;
+    width: 180px;
+}
+
+div.img:hover {
+    border: 1px solid #777;
+}
+
+div.img img {
+    width: 100%;
+    height: auto;
+}
+
+div.desc {
+    padding: 15px;
+    text-align: center;
+}
+</style> -->
+<style>
+p a:link {color:#0099cc;text-decoration:none;}      /* 未访问链接*/
+p a:visited {color:#0099cc;text-decoration:none;}  /* 已访问链接 */
+p a:hover {color:#FF00FF;text-decoration:underline;}  /* 鼠标移动到链接上 */
+p a:active {color:#0000FF;text-decoration:underline;}  /* 鼠标点击时 */
+</style>
+<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?c0e0da06484728051bdc4a297ace0233";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+</head>
+<body>       
+<nav>
+	<ul>   
+	 <li><a href="index2.html"> ENGLISH</a></li>
+     <li><a href="update.htm">更新日志</a></li>
+     <li><a  href="http://chnosz.net/">CHNOSZ</a></li> 
+     <li><a  href="introduction/new_8.html">团队简介</a></li>   
+     <li><a class="active" href="index.html">主页</a></li>
+     
+      <div class="search-container">
+    <form action="/action_page.php">
+      <input type="text" placeholder="搜索.." name="search">
+     
+    </form>
+ 
+  </div>
+ </ul>
+ </nav>  
+    
+   <section  class="header" style="background: rgba(0, 0, 0, 0) url('home-banner1.png') no-repeat scroll 0 0 / 100% 28rem; min-height: 15rem; width: 1583; height: 470;" >
+              <div class="banner-caption">
+                                <br>
+                                <h1 class="banner-text" href ="desk-1.html">welcome to  Geo-TVP </h1>
+                                 <h3 class="banner-text1" > Geochemical Thermodynamics Visualization Platform</h3> 
+                                 
+                                 <h1 class="banner-text" href ="desk-1.html">地球热动力学数据可视化平台</h1>
+                                 <h3 class="banner-text1" ">第二届全国地质资料数据创新应用大赛获奖作品</h3> 
+                              </div> 
+                           
+     </section> 
+
+<div class="topnav">
+  <a href="intro.pdf">GeoTVP介绍</a>
+  <a href="intro.pptx">使用手册</a>
+  <a href="desk-1.html">demo</a>
+  <a href="http://47.100.56.241">技术博客</a>
+  <a href="geoplot2/" style="float:right">探索实验室</a>
+</div>
+
+<div class="row">
+  <div class="leftcolumn">
+    <div class="card1">
+      <h2>Welcome to GeoTVP</h2>
+      <h4>2019 年 7 月 29日</h4>
+      <div><img src="earth.jpg" style="height:17rem;width: 100%" ></img></div>
+      
+      <p>在各种地质过程，存在着复杂的地球热动力学过程。自上世纪中期Goldschmidt首次将热力学引入地球化学，科学界建立了大量地球热力学数据库。运用这些热力学数据库，我们可以进行深部成矿预测，历史古环境重构，板块运动等极具经济和科学价值的研究。但是地质过程中涉及的条件十分复杂，目前地质工作者只能使用一些统计软件或者人脑计算绘图，处理过程耗时且结果不准确，限制了许多地质科研和生产工作。GeoTVP （Geochemical Thermodynamics Visualization Platform）是第一款免费，高效，准确，快捷的热力学数据可视化分析web端APP 。目前可以实现的功能有地球热动力学相图动态绘制与计算，热动力学数据查询，热动力学文献查询等功能。适用于广大的生产、科研工作者和大学生使用。
+GeoTVP是基于CHNOSZ地球化学热力学计算包而开发的地质数据处理平台，目前可以实现的功能有常见金属成矿物的pH-Eh相图。你可以通过域名
+     <a href="http://geotvp.cn">geotvp.cn</a>
+    或者备用域名
+    <a href="http://geotvp.cn">geoc.xyz</a>访问我们。内部测试版本，仅供中南大学师生试用，请勿公开，建议在PC端访问。</p>
+  </div>
+
+   
+
+    
+  
+   
+      
+<div class="card1">
+        <h4>2019.12.9更新内容</h4>
+      <p>1.更新使用手册，和GeoTVP详细介绍部分<a href="intro.pdf">查看</a></p>
+      <p>2.更新网站某些链接失灵的问题</p>
+     <p>3.测试版网址geoc.xyz已停止维护，直接进入geotvp.cn</p>
+     <p>4.加入新闻（news）板块</p>
+</div>
+
+   <div class="card1">
+    <h3> 应用实例</h3>
+     <h4> 2019.10.10 以大姚铜矿中相图的应用</h4>
+     <br>
+
+   <img src="demo.jpg" alt="大姚铜矿" style="height:25rem;width: 28rem;float:left"></img>
+    <img src="demo2.png" alt="大姚铜矿" style="height:25rem;width: 40rem"></img>
+    <br>
+   <h4>分析结论</h4>
+   <p>  矿物的稳定区符合大姚铜矿矿物组成上的关系,在主要矿物稳定区上进行由Eh,pH参数制约的划分,可得出关于砂岩型铜矿分带控制因素 : 大姚铜矿分带基本处于还原的环境下,并且这个分带主要受 pH 值控制 。在该区找矿过程中胶结物的指示作用没有受到足够的重视 , 而上所述分析结果表明该区 pH 值对矿物分带具有极其重要的作用,即 pH>6.23 时 ,碱 性胶结物处富矿明显。因而在进一步的找矿工作中应重视对矿物胶结物的分析,通过胶结物间接指示找矿,即在靠近碳酸盐胶结处寻找富矿 。(<a href="https://DOI:10.16461/j.cnki.1000-4734.2013.03.006">Zhang yang et al,2013</a>;<a href="https://DOI:10.19719/j.cnki.1001-6872.2010.02.013">Gao et al 2010</a>)
+   </p>
+   
+  </div>
+  
+
+    <div id="ex" class="card1">
+      <h2>示例</h2>
+      <h4>2019 年 5 月 6日</h4>
+      <p><iframe type="img" id= "iframe1" src="Cu/" style="border: 0.1rem solid #AAA; width: 100%; height: 54rem;"></iframe></p>
+    </div>
+   
+  </div>
+
+  <div class="rightcolumn">
+    <div class="card">
+        <h3 >GeoTVP最新版入口</h3>
+        <h4>2019.12.9</h4>
+        <div ><img src="point.jpg" style="height:4rem;width: 8rem" ></img>
+          <a href="table.html" style="float:left ; color:#0099cc"><h1>Worktable</h1></a></div>
+      
+      </div>
+    <div class="card">
+      <h3>关于我们</h3>
+      <div class="img">
+    <a target="_blank" href="introduction/new_8.html">
+      <img src="group.jpg" alt="Trolltunga Norway" width="300" height="200"></img>
+    </a>
+    <div class="desc" href="introduction/new_8.html" >GeoTVP课题组成员
+      <p>中南大学地学楼237办公室</p></div>
+  </div>
+      
+    </div>
+    <div class="card">
+      <h3>成图预览</h3>
+
+     
+    <a target="_blank" href="copper1.png">
+         <div class="tooltip">
+    <img src="copper1.png" alt="copper1.png" width="300" height="200"></img>
+     <span class="tooltiptext">
+      <img src="copper1.png" alt="copper1.png" width="600" height="400"></img>
+    </span></div>
+       <p><a href="https://doi.org/10.1149/1.1344532">copper — Complexation of copper with glycine species (Aksu and Doyle, 2001)</a></p>
+    </a>
+
+        
+     <a target="_blank" href="density1.png">
+      <div class="tooltip">
+      <img src="density1.png" alt="density1.png" width="300" height="200"></img>
+       <span class="tooltiptext"><img src="density1.png" alt="density1.png" width="600" height="400"></img>
+       	  </span></div>
+       <p><a href="https://doi.org/10.1063/1.1461829">density — Density of H2O inverted from IAPWS-95 equations (Wagner and Pruss, 2002)(Bowers et al., 1984)</a></p>
+    </a>
+
+     
+    <a target="_blank" href="arsenic1.png">
+      <div class="tooltip">
+      <img src="arsenic1.png" alt="arsenic1.png" width="300" height="200"></img> <span class="tooltiptext"><img src="arsenic1.png" alt="arsenic1.png" width="600" height="400"></img>
+       	  </span></div>
+       <p><a href="https://doi.org/10.1007/s12665-010-0652-x">arsenic — Eh-pH diagram for the system As-O-H-S (Lu and Zhu, 2011)</a></p>
+     
+        <h4 style="float: right;"><a href="http://chnosz.net/demos/index.html">更多</a></h4>
+        
+    </a>
+  
+    </div>
+   
+
+    <div class="card"  style=" margin-top: -0.7rem;">
+      <h3>Note：</h3>
+      <p style="color: #666;">如果网站中有明显错误，请联系我们：shinyfour@geotvp.cn，谢谢！</p>
+       </div> 
+       <div class="card">
+    <h3> NEWS</h3>
+    <h4> GeoTVP开发团队受邀《第一届地质数据论坛》做专题报告2019.10.15</h4>
+    <p> 随着大数据时代的到来和地球系统科学问题研究的深入，地质科学研究数据已经成为科学研究成果中的重要组成部分，也是社会可持续发展不可或缺的科技资源。
+10月16日，中国地质调查局发展研究中心（全国地质资料馆）《地质科学数据专辑》编辑部在北京举办第一届地质科学数据发展论坛。本次论坛邀请地质科学领域资深专家、数据信息管理领域技术专家以及地质科学数据作者等，就地质科学数据发展趋势、制图和数据库技术、地质科学数据研究热点等议题分别展开讨论。本团队指导老师于淼老师受邀参加论坛，就GEOTVP的开发及未来数据库的建设趋势做专题报告。本次报告内容受到许多在会同行的关注和好评。
+ </p>
+    <img src="report2.jpg" alt="地质数据论坛" style="height:23rem;width: 23rem ;margin:0.1rem 0.1rem 3.4rem;"></img>
+    <br>
+   <br>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  
+         <h1 class="banner-text">We are all on the way</h1>
+         <h3 >www.geotvp.cn</h3> 
+         <h3 >备案号：蜀ICP备19029754号</h3> 
+</div>
+
+</body>
+</html>
