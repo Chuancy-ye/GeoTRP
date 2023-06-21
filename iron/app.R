@@ -1,0 +1,187 @@
+# app.R: a simple mockup for inputting diagram type and options
+# v2.0 (20190910): initial version
+library(shiny)
+library(CHNOSZ)
+ui <- fluidPage(
+  includeCSS("style.css"),
+
+  navbarPage(a(href="http://134.175.117.194/", tags$div("GeTuRCaSh",style="font-family: 'Lobster', cursive;
+  font-weight: 500;line-height: 1.1;color: #ad1d28;")),
+             
+    tabsetPanel( 
+    tabPanel("Diagram",
+    br(),
+    sidebarLayout(
+    sidebarPanel(
+    helpText("Geochemical Thermodynamics using R, CHNOSZ, and Shiny"),
+    selectInput("metal", "Metal", list("Iron" = "Fe", "Copper" = "Cu", "Manganese" = "Mn")),
+    sliderInput("temperature", HTML("Temperature (&deg;C)"),
+                min = 15, max = 300, value = 25, step = 5),
+    checkboxInput("addS", "add S", FALSE),
+    checkboxInput("addC", "add C", FALSE),
+    hr(),
+    submitButton(text = "Apply Changes", icon = NULL, width = NULL),
+    helpText("Logarithm of activity is 10^-6.")
+  ),
+  
+  mainPanel(
+    p(plotOutput("chnosz.diagram", height = "500px", width="500px")),
+    textOutput("text1"),
+    textOutput("text2"),
+    hr(),
+    p("Made using",
+      a(href = "http://chnosz.net", target = "_blank", "CHNOSZ"),
+      paste0(as.character(packageVersion("CHNOSZ")), ","),
+      a(href = "http://shiny.rstudio.com/", target = "_blank", "Shiny"),
+      paste0(as.character(packageVersion("shiny")), ", and"),
+      a(href = "https://www.r-project.org/", target = "_blank", "R"),
+      paste0(as.character(getRversion()), ".")
+    )
+    )
+  )
+
+),
+
+    tabPanel("Species references",
+    br() ,
+    h5("Fe Eh-pH diagrams have been given by Hem (1977) and more recently
+by Winters and Buckley (1986) who advocate consideration of aqueous
+FeSi303(OH)~ as an important species.")),
+
+   tabPanel("Species properties",
+    h1("coming soon") ),
+
+   tabPanel("code",
+    sidebarPanel(
+    selectInput("dataset", "Choose a dataset:", 
+    choices = c("code", "datebase", "diagram")),
+    downloadButton('downloadData', 'Download')
+    )))))
+server <- function(input, output) {
+  output$text1 <- renderText({
+    text <- "-O-H"
+    if(input$addC)
+    {text <- paste0("-C", text)
+      } 
+    if(input$addS) text <- paste0("-S", text)
+    text <- paste0(input$metal, text)
+    paste0("The system is ", text, ".")
+  })
+  output$text2 <- renderText(paste0("The temperature is ", input$temperature, " °C."))
+  
+  output$chnosz.diagram <- renderPlot({
+  	res <-500
+    T <- 25
+    P <- 1
+    
+   
+    if(input$addC&input$addS)
+    {
+      pH <- c(0, 14, 500)
+      Eh <- c(-1, 1, 500)
+     
+      basis(c("FeO", "SO4-2", "H2O", "H+", "e-", "CO3-2"))
+      basis("SO4-2", -6)
+      basis("CO3-2", 0)
+      species(c("Fe+2", "Fe+3"), -6)
+      species(c("pyrrhotite", "pyrite", "hematite", "magnetite", "siderite"))
+      # two sets of changing basis species:
+      # speciate SO4-2, HSO4-, HS-, H2S as a function of Eh and pH
+      # speciate CO3-2, HCO3-, CO2 as a function of pH
+      bases <- c("SO4-2", "HSO4-", "HS-", "H2S")
+      bases2 <- c("CO3-2", "HCO3-", "CO2")
+      # calculate affinities using the relative abundances of different basis species
+      # (using default blend = TRUE)
+      # note curved lines, particularly at the boundaries with siderite
+      m1 <- mosaic(bases, bases2, pH = pH, Eh = Eh, T = input$temperature)
+      # make a diagram and add water stability lines
+      diagram(m1$A.species, lwd = 2)
+      water.lines(m1$A.species, col = "seagreen", lwd = 1.5)
+      # show lines for Fe(aq) = 10^-4 M
+      species(c("Fe+2", "Fe+3"), -4)
+      m2 <- mosaic(bases, bases2, pH = pH, Eh = Eh, T =input$temperature)
+      diagram(m2$A.species, add = TRUE, names = NULL)
+      # overlay the sulfur and carbonate basis species predominance fields
+      d <- diagram(m1$A.bases, add = TRUE, col = "red", col.names = "red", lty = 3, limit.water = FALSE)
+      d <- diagram(m1$A.bases2, add = TRUE, col = "blue", names = NULL, lty = 3, limit.water = FALSE)
+      text(d$namesx, -0.8, as.expression(sapply(m1$A.bases2$species$name, expr.species)), col = "blue")
+      # add legend and title
+      dP <- describe.property(c("T", "P"), c(input$temperature, 1))
+      legend("top", dP, bty = "n")
+      dS <- expression(sum(S)*"(aq)" == 10^-6~italic(m))
+      dC <- expression(sum(C)*"(aq)" == 1~italic(m))
+      legend("topright", c(dS, dC), bty = "n")
+      t1<-"Fe-C-S-O-H"
+      t2 <- "Unchecked phase diagram 2019.9.10"
+      mtitle(as.expression(c(t1,t2)), cex = 0.95)
+      
+      # reset the database, as it was changed in this example
+      reset()
+    }
+    else if(input$addC){
+      basis(c("Fe","H2O","H+","e-","CO2","H2S"))
+      basis("CO2",c(-3))
+      iaq <- retrieve("Fe",c("O","H","C"),"aq")
+      icr <- retrieve("Fe", c("O", "H","C"), "cr")
+      species( c(iaq,icr))
+      # set activities of aqueous species
+      species(1:length(iaq), -6)
+      bases <-c("CO2","CO3-2","HCO3-")
+      m <- mosaic(bases,pH = c(0, 14,res), Eh = c(-0.8, 1.2,res),T=input$temperature,P=P)
+      # adjust colors and names
+      fill <- rev(heat.colors(nrow(species())))
+      fill[which(species()$state == "cr")] <- "slategray3"
+      m$A.species$species$name <- gsub(",alpha", "", m$A.species$species$name)
+      # make the plot!
+      diagram(m$A.species, fill = fill)
+      dprop <- describe.property(c("T", "P"), c(T, P))
+      #add legend and title
+      legend("bottomleft", legend = dprop, bty = "n")
+      t1<-"Fe-C-O-H"
+      t2 <- "Unchecked phase diagram 2019.9.10"
+      mtitle(as.expression(c(t1,t2)), cex = 0.95)
+      reset()
+    }else if (input$addS){
+      basis(c("Fe","H2O","H+","e-","CO2","H2S"))
+    basis("H2S",c(-3))
+    iaq <- retrieve("Fe",c("O","H","S"),"aq")
+    icr <- retrieve("Fe", c("O", "H","S"), "cr")
+    species( c(iaq,icr))
+    # set activities of aqueous species
+    species(1:length(iaq), -6)
+    bases <-c("H2S","HS-","SO4-2","HSO4-")
+    m <- mosaic(bases,pH = c(0, 14,res), Eh = c(-0.8, 1.2,res),T=input$temperature,P=P)
+    fill <- rev(heat.colors(nrow(species())))
+    fill[which(species()$state == "cr")] <- "slategray3"
+    m$A.species$species$name <- gsub(",alpha", "", m$A.species$species$name)
+    # make the plot!
+    diagram(m$A.species, fill = fill)
+    dprop <- describe.property(c("T", "P"), c(T, P))
+    legend("bottomleft", legend = dprop, bty = "n")
+    t1<-"Fe-S-O-H"
+    t2 <- "Unchecked phase diagram 2019.9.10"
+    mtitle(as.expression(c(t1,t2)), cex = 0.95)
+
+    reset()
+    }else{
+    
+    #an Eh-pH diagram for Fe-bearing aqueous species
+      basis(c("Fe","H2O","H+","e-"))
+    iaq <- retrieve("Fe", c("O", "H"), "aq")
+    
+    species( c(iaq))
+    a <- affinity(pH = c(0, 14,res), Eh = c(-0.8, 1.2,res),T=input$temperature,P=P)
+    diagram(a,fill="terrain")
+    dprop <- describe.property(c("T", "P"), c(T, P))
+    legend("bottomleft", legend = dprop, bty = "n")
+    t1<-"Fe-O-H"
+    t2 <- "Unchecked phase diagram 2019.9.10"
+    mtitle(as.expression(c(t1,t2)), cex = 0.95)
+    reset()
+   }
+  })
+}
+
+
+shinyApp(ui = ui, server = server)
+
