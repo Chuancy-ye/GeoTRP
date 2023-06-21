@@ -1,0 +1,132 @@
+* {
+    box-sizing: border-box;
+}
+
+/* body 样式 */
+body {
+    font-family: Arial;
+
+  padding: 0.6rem 2rem;
+  background: #dddddd;
+}
+ 
+/* 标题 */
+.header {
+    padding: 4rem;
+    text-align: center;
+    background: #0099cc;
+    color: white;
+}
+ 
+/* 标题字体加大 */
+.header h1 {
+    font-size: 40px;
+}
+ 
+/* 导航 */
+.navbar {
+    overflow: hidden;
+    background-color: #333;
+}
+ 
+/* 导航栏样式 */
+.navbar a {
+    float: left;
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 0.8rem 1.6rem;
+    text-decoration: none;
+}
+ 
+/* 右侧链接*/
+.navbar a.right {
+    float: right;
+}
+ 
+/* 鼠标移动到链接的颜色 */
+.navbar a:hover {
+    background-color: #f1f1f1;
+    color: black;
+}
+ 
+/* 列容器 */
+.row {  
+    display: -ms-flexbox; /* IE10 */
+    display: flex;
+    -ms-flex-wrap: wrap; /* IE10 */
+    flex-wrap: wrap;
+}
+ 
+/* 创建两个列 */
+/* 边栏 */
+.side {
+    -ms-flex: 30%; /* IE10 */
+    flex: 30%;
+    background-color: #f1f1f1;
+    padding: 2rem;
+}
+ 
+/* 主要的内容区域 */
+.main {   
+    -ms-flex: 70%; /* IE10 */
+    flex: 70%;
+    background-color: white;
+    padding: 2rem;
+}
+ 
+/* 测试图片 */
+.fakeimg {
+    background-color: #aaa;
+    width: 100%;
+    padding: 2rem;
+}
+ 
+/* 底部 */
+.footer {
+    padding: 1.5rem;
+    text-align: center;
+    background: #ddd;
+}
+ /*菜单样式*/
+ .vertical-menu {
+    width: 100%;
+    height:30rem;
+    overflow-y: auto;
+
+}
+
+.vertical-menu a {
+    background-color: #eee;
+    color: black;
+    display: block;
+    padding: 12px ;
+    text-decoration: none;
+}
+
+.vertical-menu a.active:hover {
+    background-color: #006699;
+}
+
+.vertical-menu a.active {
+    background-color: #0099cc;
+    color: white;
+}
+.banner-text {
+ 	text-transform:uppercase;
+ 	color:white;
+ }
+/* 响应式布局 - 在屏幕设备宽度尺寸小于 700px 时, 让两栏上下堆叠显示 */
+@media screen and (max-width: 700px) {
+    .row {   
+        flex-direction: column;
+    }
+}
+ 
+/* 响应式布局 - 在屏幕设备宽度尺寸小于 400px 时, 让导航栏目上下堆叠显示 */
+@media screen and (max-width: 400px) {
+    .navbar a {
+        float: none;
+        width: 100%;
+    }
+}
